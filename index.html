@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio | Irfan</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root {
+    --bg-deep: #0a0a0a;
+    --bg-secondary: #121212;
+    --accent-red: #e63946;
+    --text-white: #ffffff;
+    --text-gray: #b0b0b0;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; scroll-behavior:smooth; }
+body { font-family:'Poppins',sans-serif; background:var(--bg-deep); color:var(--text-white); overflow-x:hidden; }
+
+/* --- Scroll Reveal Animations --- */
+.reveal { opacity:0; filter:blur(5px); transition: all 1s ease-out; }
+.fade-up { transform: translateY(50px); }
+.slide-left { transform: translateX(-50px); }
+.slide-right { transform: translateX(50px); }
+.fade-scale { opacity:0; transform: scale(0.85); transition: all 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+.reveal.active, .fade-scale.active { opacity:1; filter:blur(0); transform: translate(0,0) scale(1); }
+
+/* NAVBAR */
+nav {
+    position: fixed; top:0; width:100%; display:flex; justify-content:space-between; align-items:center;
+    padding:20px 8%; background: rgba(10,10,10,0.8); backdrop-filter: blur(10px); z-index:1000;
+}
+nav .logo{ font-size:1.5rem; font-weight:700; color:var(--accent-red);}
+nav ul{ display:flex; list-style:none; }
+nav ul li{ margin-left:30px; }
+nav ul li a{ text-decoration:none; color:white; transition:.3s; }
+nav ul li a:hover{ color:var(--accent-red); }
+
+/* HERO */
+#hero{
+    height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;
+    background:radial-gradient(circle at center,#1a0505 0%,#0a0a0a 100%);
+}
+.hero-title{ font-size:clamp(2.5rem,8vw,5rem); font-weight:700; }
+.hero-title span{ color:var(--accent-red); }
+
+/* ABOUT SECTION */
+section{ padding:100px 10%; }
+.about-container{ display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center; }
+.about-img video{ width:100%; height:450px; object-fit:cover; border-radius:15px; filter:grayscale(100%); transition:.6s; box-shadow:0 10px 30px rgba(0,0,0,0.5);}
+.about-img:hover video{ filter:grayscale(0%); transform: scale(1.02); }
+@media(max-width:768px){ .about-container{ grid-template-columns:1fr; text-align:center;} .about-img video{height:auto; max-height:350px; object-fit:contain; background:#000;}}
+
+/* PORTFOLIO */
+#portfolio{ background:var(--bg-secondary); }
+.portfolio-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:25px; }
+.project-card{ position:relative; overflow:hidden; border-radius:15px; cursor:pointer; transition:transform 0.2s;}
+.project-card:active{ transform: scale(0.95);}
+.project-card img{ width:100%; height:250px; object-fit:cover; transition:.5s;}
+.project-card:hover img{ transform:scale(1.1);}
+.overlay{ position:absolute; inset:0; background:rgba(230,57,70,0.85); display:flex; flex-direction:column; justify-content:center; align-items:center; opacity:0; transition:.4s;}
+.project-card:hover .overlay{ opacity:1; }
+
+/* MODAL DETAIL */
+.profile-detail{
+    position:fixed; inset:0; background:rgba(0,0,0,0.9); display:none; justify-content:center; align-items:center; z-index:2000; backdrop-filter:blur(5px);
+}
+.profile-detail.active{ display:flex; }
+.detail-content{
+    background:var(--bg-secondary); padding:40px; border-radius:20px; width:90%; max-width:1000px; max-height:85vh; overflow-y:auto; position:relative;
+    transform: scale(0.7); opacity:0; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.profile-detail.active .detail-content{ transform: scale(1); opacity:1; }
+
+/* SUB-MODAL */
+.sub-modal{ position:fixed; inset:0; background:rgba(0,0,0,0.95); display:none; justify-content:center; align-items:center; z-index:3000; padding:20px;}
+.sub-modal.active{ display:flex;}
+.sub-modal .detail-content{ transform:translateY(50px); opacity:0; transition:all 0.5s ease-out; }
+.sub-modal.active .detail-content{ transform:translateY(0); opacity:1; }
+
+.sub-gallery-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin-bottom:20px;}
+.sub-gallery-grid img{ width:100%; height:250px; object-fit:cover; border-radius:10px; opacity:0; transform:scale(0.8); transition:all 0.4s ease-out; cursor:pointer;}
+.sub-gallery-grid img.active{ opacity:1; transform:scale(1);}
+.sub-gallery-grid img:hover{ transform: scale(1.05) translateY(-5px); box-shadow:0 10px 20px rgba(230,57,70,0.5); }
+
+.sub-item{ opacity:0; transform:translateY(20px); transition:all 0.5s ease-out;}
+.sub-item.active{ opacity:1; transform:translateY(0); }
+
+@media(max-width:600px){ .sub-gallery-grid{ grid-template-columns:1fr;} }
+.close-btn{ position:absolute; top:20px; right:25px; font-size:2rem; color:var(--accent-red); cursor:pointer; transition:0.3s;}
+.close-btn:hover{ transform:rotate(90deg); }
+
+/* CONTACT */
+.contact-container{ max-width:600px; margin:auto;}
+form input, form textarea{ width:100%; background:#1a1a1a; border:1px solid #333; padding:15px; margin-bottom:15px; color:white; border-radius:8px; }
+.btn-cta{ padding:15px 40px; border:2px solid var(--accent-red); color:var(--accent-red); text-decoration:none; transition:.4s; cursor:pointer; background:none; border-radius:5px; }
+.btn-cta:hover{ background:var(--accent-red); color:white; box-shadow:0 0 20px rgba(230,57,70,0.4); }
+
+.social-icons{ text-align:center; margin-top:30px; }
+.social-icons a{ color:white; font-size:2rem; transition:0.3s; display:inline-block; }
+.social-icons a:hover{ color:var(--accent-red); transform:translateY(-5px); }
+
+footer{ text-align:center; padding:40px; border-top:1px solid #222; color:var(--text-gray);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="logo">fan<span style="color:white;">mumtaz.</span></div>
+    <ul>
+        <li><a href="#hero">Beranda</a></li>
+        <li><a href="#about">Tentang</a></li>
+        <li><a href="#portfolio">Portofolio</a></li>
+        <li><a href="#contact">Kontak</a></li>
+    </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+    <div class="reveal fade-up active">
+        <h1 class="hero-title">IRFAN MUMTAZ <span>HABIBI</span></h1>
+        <p style="letter-spacing:3px; margin:20px 0;">PUBLIC SPEAKER • PEMIMPIN MUDA</p>
+        <a href="#portfolio" class="btn-cta">Lihat Profil Saya</a>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+    <h2 style="text-align:center; font-size:2.5rem; margin-bottom:50px;" class="reveal fade-up">Tentang <span>Irfan</span></h2>
+    <div class="about-container">
+        <div class="about-img reveal slide-left">
+            <video autoplay muted loop playsinline>
+                <source src="irfan profil .mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="reveal slide-right">
+            <h3>Pengenalan</h3>
+            <p style="color:var(--text-gray); margin-top:20px; line-height:1.8;">
+                Aku adalah seorang pelajar yang selalu berusaha untuk menjadi lebih baik. Aku tertarik akan hal-hal seputar Public Speaking dan Leadership. Dengan terus menekuninya, aku yakin dapat menjadi bagian dari "Generasi emas Indonesia 2045".
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+    <h2 style="text-align:center; font-size:2.5rem; margin-bottom:50px;" class="reveal fade-up">Profil <span>Irfan</span></h2>
+    <div class="portfolio-grid">
+        <div class="project-card reveal fade-scale" onclick="openDetail(0)" style="transition-delay:0.1s;">
+            <img src="bidang ikon .jpg">
+            <div class="overlay"><h4>Bidang kuminati</h4><p>Klik Detail</p></div>
+        </div>
+        <div class="project-card reveal fade-scale" onclick="openDetail(1)" style="transition-delay:0.3s;">
+            <img src="pengalaman ikon .jpg">
+            <div class="overlay"><h4>Pengalaman</h4><p>Klik Detail</p></div>
+        </div>
+        <div class="project-card reveal fade-scale" onclick="openDetail(2)" style="transition-delay:0.5s;">
+            <img src="prestasi ikon .jpg">
+            <div class="overlay"><h4>Prestasi</h4><p>Klik Detail</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- MODAL DETAIL -->
+<div id="profileDetail" class="profile-detail">
+    <div class="detail-content">
+        <span class="close-btn" onclick="closeDetail()">&times;</span>
+        <h3 id="detailTitle"></h3>
+        <p id="detailDesc" style="color:var(--text-gray); margin:15px 0;"></p>
+        <div id="detailGallery" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px;"></div>
+    </div>
+</div>
+
+<!-- SUB-MODAL -->
+<div id="subModal" class="sub-modal">
+    <div class="detail-content" style="text-align:center;">
+        <span class="close-btn" onclick="closeSub()">&times;</span>
+        <div class="sub-gallery-grid" id="subGalleryGrid"></div>
+        <h3 id="subTitle" class="sub-item" style="color:var(--accent-red)"></h3>
+        <p id="subInfo" class="sub-item" style="color:var(--text-gray); margin-top:10px;"></p>
+    </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+    <h2 style="text-align:center; font-size:2.5rem; margin-bottom:50px;" class="reveal fade-up">Get <span>In Touch</span></h2>
+    <div class="contact-container reveal fade-up">
+        <form id="emailForm">
+            <input type="text" id="name" placeholder="Nama Lengkap" required>
+            <input type="email" id="email" placeholder="Email Anda" required>
+            <textarea id="message" rows="5" placeholder="Pesan Anda" required></textarea>
+            <button type="submit" class="btn-cta" style="width:100%">Kirim Pesan</button>
+        </form>
+        <div class="social-icons">
+            <a href="https://www.instagram.com/fanmumtaz" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 Fanmumtaz. Pemimpin masa depan.</p>
+</footer>
+
+<script>
+// Scroll Reveal
+const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{ if(entry.isIntersecting) entry.target.classList.add('active'); });
+},{ threshold:0.15 });
+document.querySelectorAll('.reveal, .fade-scale').forEach(el=>observer.observe(el));
+
+// Data Portfolio
+const data = {
+0:{ title:"Bidang yang kuminati", desc:"Klik gambar untuk lihat dokumentasi", hasSub:true, items:[
+{img:"ps irfan .jpg", name:"Public Speaking", bukti:["ps1.jpg","ps 2.jpg","ps 3 .jpg"], info:"Seni komunikasi persuasif."},
+{img:"leadership .jpg", name:"Leadership", bukti:["ld1 .jpg","ld2 .jpg","ld3 .jpg"], info:"Manajemen tim dan organisasi."},
+{img:"sosialikon.jpg", name:"Sosial ", bukti:["pol1.jpg","pol2.jpg","pol3.jpg"], info:"Isu-isu kemanusiaan."}
+]},
+1:{ title:"Pengalaman", desc:"Klik gambar untuk lihat dokumentasi", hasSub:true, items:[
+{img:"irfan ketos .jpg", name:"Ketua OSIS IC", bukti:["os1.jpg","os2 .jpg","os3 .jpg"], info:"Masa bakti 2025/2026."},
+{img:"irfan smp .jpg", name:"Ketua OSIS BIC", bukti:["bic1 .jpg","bic2 .jpg","bic3 .jpg"], info:"Masa bakti 2023/2024."},
+{img:"dira ikon .jpg", name:"Duta Lead", bukti:["duta1.jpg","duta2.jpg","duta3.jpg"], info:"Duta Lead 2025."}
+]},
+2:{ title:"Prestasi", desc:"Pencapaian Irfan", hasSub:false, items:[
+{img:"prestasi 1 .jpg", name:"Lulusan Terbaik"},
+{img:"prestasi 2 .jpg", name:"OLSIT 2025"},
+{img:"prestasi 3 .jpg", name:"Camp Competition"}
+]}
+};
+
+// Modal Detail
+function openDetail(id){
+    const info = data[id];
+    document.getElementById('detailTitle').innerText = info.title;
+    document.getElementById('detailDesc').innerText = info.desc;
+    const gallery = document.getElementById('detailGallery');
+    gallery.innerHTML="";
+    info.items.forEach((item,index)=>{
+        const action = info.hasSub?`onclick="openSub(${id},${index})"`:"";
+        const style = info.hasSub?"cursor:pointer; border:1px solid #333; padding:10px; border-radius:10px;":"";
+        gallery.innerHTML+=`
+        <div ${action} style="${style}" class="gallery-item">
+            <img src="${item.img}" style="width:100%; height:150px; object-fit:cover; border-radius:8px;">
+            <p style="margin-top:10px; font-weight:bold; text-align:center;">${item.name}</p>
+        </div>`;
+    });
+    const modal=document.getElementById('profileDetail');
+    modal.style.display='flex';
+    setTimeout(()=>{ modal.classList.add('active'); },10);
+    document.body.style.overflow='hidden';
+}
+function closeDetail(){ 
+    const modal=document.getElementById('profileDetail');
+    modal.classList.remove('active');
+    setTimeout(()=>{ modal.style.display='none'; },400);
+    document.body.style.overflow='auto';
+}
+
+// Sub-Modal
+function openSub(catId,itemIdx){
+    const item = data[catId].items[itemIdx];
+    const grid = document.getElementById('subGalleryGrid');
+    grid.innerHTML="";
+
+    const subTitle=document.getElementById('subTitle');
+    const subInfo=document.getElementById('subInfo');
+    subTitle.innerText=item.name;
+    subInfo.innerText=item.info||data[catId].desc;
+    subTitle.classList.remove('active'); subInfo.classList.remove('active');
+    setTimeout(()=>{ subTitle.classList.add('active'); subInfo.classList.add('active'); },50);
+
+    const subModal=document.getElementById('subModal');
+    subModal.style.display='flex';
+    const content=subModal.querySelector('.detail-content');
+    content.style.transform='translateY(50px)'; content.style.opacity=0;
+    setTimeout(()=>{
+        subModal.classList.add('active'); content.style.transform='translateY(0)'; content.style.opacity=1;
+        if(item.bukti){ item.bukti.forEach((src,index)=>{
+            const imgEl=document.createElement('img'); imgEl.src=src; imgEl.classList.add('sub-img','sub-item');
+            grid.appendChild(imgEl); setTimeout(()=>{ imgEl.classList.add('active'); },index*150);
+        });}
+    },300);
+}
+function closeSub(){ 
+    const subModal=document.getElementById('subModal');
+    subModal.classList.remove('active');
+    setTimeout(()=>{ subModal.style.display='none'; },400);
+}
+
+// Form Email
+document.getElementById("emailForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    const name=document.getElementById("name").value;
+    const message=document.getElementById("message").value;
+    window.location.href=`mailto:irfan.mumtaz130110@gmail.com?subject=Pesan Portfolio&body=Nama: ${name}%0APesan: ${message}`;
+});
+</script>
+
+</body>
+</html>
